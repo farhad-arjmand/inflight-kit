@@ -1,0 +1,66 @@
+{
+  "name": "inflight-kit",
+  "version": "1.0.0",
+  "description": "Share pending async work without sharing cancellation. Typed singleflight with per-caller deadlines and bounded admission.",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:types": "tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 test/types.mts test/types.cts",
+    "check": "npm test && npm run test:types",
+    "demo": "npm run build && node examples/demo.mjs",
+    "prepack": "npm run build",
+    "test:package": "node scripts/smoke-pack.mjs"
+  },
+  "keywords": [
+    "singleflight",
+    "deduplicate",
+    "async",
+    "abortsignal",
+    "fetch",
+    "request-coalescing",
+    "typescript",
+    "cancellation"
+  ],
+  "license": "MIT",
+  "author": "Farhad Arjmand",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farhad-arjmand/inflight-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farhad-arjmand/inflight-kit/issues"
+  },
+  "homepage": "https://github.com/farhad-arjmand/inflight-kit#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
