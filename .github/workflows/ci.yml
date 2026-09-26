@@ -6,19 +6,24 @@ permissions:
   contents: read
 jobs:
   test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: [ubuntu-latest]
         node: [20, 22, 24]
+        include:
+          - os: windows-latest
+            node: 22
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: '${{ matrix.node }}'
+          node-version: "${{ matrix.node }}"
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run format:check
       - run: npm run check
       - run: npm run demo
-      - run: npm audit --omit=dev
-      - run: npm pack --dry-run
+      - run: node examples/integration.mjs
       - run: npm run test:package
+      - run: npm audit --omit=dev

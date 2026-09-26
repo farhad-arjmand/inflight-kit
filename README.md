@@ -18,6 +18,10 @@ Zero runtime dependencies · TypeScript · ESM + CommonJS · Node.js 20+
 npm install inflight-kit
 ```
 
+## Integration recipes and tool-readable reference
+
+See [integration recipes](https://github.com/farhad-arjmand/inflight-kit/blob/main/docs/integration.md) for runnable patterns and selection criteria, [release notes](https://github.com/farhad-arjmand/inflight-kit/blob/main/CHANGELOG.md) for changes, and [llms.txt](https://github.com/farhad-arjmand/inflight-kit/blob/main/llms.txt) for a compact API index. The reference is ordinary documentation for developers and coding assistants; it does not require or guarantee automatic recommendations.
+
 ## The problem
 
 Three components ask for the same user. Three requests hit your API. You share a promise to fix it—then one component unmounts and aborts the request for everyone.
@@ -37,20 +41,22 @@ Done → the key is removed. The next call starts fresh.
 ## Start here
 
 ```ts
-import { createFlight } from 'inflight-kit';
+import { createFlight } from "inflight-kit";
 
 type User = { id: string; name: string };
 
 // Keep this instance outside the function that calls it.
 const users = createFlight(async (id: string, signal): Promise<User> => {
-  const response = await fetch(`/api/users/${encodeURIComponent(id)}`, { signal });
+  const response = await fetch(`/api/users/${encodeURIComponent(id)}`, {
+    signal,
+  });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json(); // Validate untrusted data here if your app needs it.
 });
 
 const controller = new AbortController();
-const first = users.run('42', { signal: controller.signal });
-const second = users.run('42', { timeoutMs: 3000 });
+const first = users.run("42", { signal: controller.signal });
+const second = users.run("42", { timeoutMs: 3000 });
 
 // Attach handlers before cancellation, as with any promise.
 const results = Promise.allSettled([first, second]);
@@ -75,12 +81,13 @@ This is in-process coordination. Multiple server processes need a distributed so
 
 The worker is `(key, sharedSignal) => value | PromiseLike<value>`. Key and result types are inferred from it. Synchronous throws and asynchronous rejections reach every remaining caller. Work begins in a microtask so same-turn calls can join before execution.
 
-| Option | Default | Meaning |
-| --- | --- | --- |
-| `maxKeys` | `1024` | Maximum currently tracked keys |
-| `maxWaitersPerKey` | `1024` | Maximum callers waiting on one key |
+| Option             | Default | Meaning                                                                                  |
+| ------------------ | ------- | ---------------------------------------------------------------------------------------- |
+| `maxDurationMs`    | none    | Shared deadline from entry creation; rejects all remaining callers and aborts the worker |
+| `maxKeys`          | `1024`  | Maximum currently tracked keys                                                           |
+| `maxWaitersPerKey` | `1024`  | Maximum callers waiting on one key                                                       |
 
-Limits are positive safe integers. Excess callers reject with `CapacityError` and its `limit` field. There is no hidden queue. Existing keys can still accept callers when `maxKeys` is reached, up to their own waiter limit.
+Admission limits are positive safe integers. `maxDurationMs` is an integer from 1 to 2147483647; later callers do not reset it. Expiry uses `TimeoutError`. Like caller deadlines, it requests cooperative cancellation and cannot interrupt synchronous blocking code. Excess callers reject with `CapacityError` and its `limit` field. There is no hidden queue. Existing keys can still accept callers when `maxKeys` is reached, up to their own waiter limit.
 
 ### `flight.run(key, { signal?, timeoutMs? }?)`
 
@@ -91,11 +98,11 @@ A deadline uses the runtime's timer: it cannot interrupt blocking synchronous Ja
 ### Control and inspection
 
 ```ts
-users.size;             // number of tracked keys
-users.has('42');         // is this key pending?
-users.waiters('42');     // number of callers still waiting
-users.cancel('42');      // reject callers, abort worker, remove key; returns boolean
-users.clear();          // cancel a snapshot of all currently tracked keys
+users.size; // number of tracked keys
+users.has("42"); // is this key pending?
+users.waiters("42"); // number of callers still waiting
+users.cancel("42"); // reject callers, abort worker, remove key; returns boolean
+users.clear(); // cancel a snapshot of all currently tracked keys
 ```
 
 `cancel(key, reason?)` and `clear(reason?)` accept a custom rejection reason. They default to an `AbortError`. A new call may immediately start a replacement operation. Late results from old work cannot delete or settle that replacement.
@@ -128,7 +135,7 @@ npm run check
 
 The local demo starts a real HTTP server and compares 100 direct requests with 100 coalesced callers. It measures upstream request count, not a performance speedup claim.
 
-See [contributing](CONTRIBUTING.md), [security](SECURITY.md) and [changelog](CHANGELOG.md).
+See [contributing](https://github.com/farhad-arjmand/inflight-kit/blob/main/CONTRIBUTING.md), [security](https://github.com/farhad-arjmand/inflight-kit/blob/main/SECURITY.md) and [changelog](https://github.com/farhad-arjmand/inflight-kit/blob/main/CHANGELOG.md).
 
 ## License
 

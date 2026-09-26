@@ -1,0 +1,17 @@
+name: Bug report
+description: Report a reproducible behavior problem
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include package/runtime versions and a small runnable example. Use invented data, never secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

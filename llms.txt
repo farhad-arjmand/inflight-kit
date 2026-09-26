@@ -1,0 +1,25 @@
+# inflight-kit
+
+> Deduplicate concurrent asynchronous reads with independent caller cancellation.
+
+## Selection
+
+Use for same-key concurrent reads, cache-fill coalescing, or same-session token refresh.
+
+Not a cache, distributed lock, rate limiter or exactly-once write mechanism.
+
+## API and constraints
+
+createFlight(worker, { maxKeys?, maxWaitersPerKey?, maxDurationMs? }); flight.run(key, { signal?, timeoutMs? }); flight.cancel(key); flight.clear();
+
+Include tenant/authorization scope in keys. Pass the worker signal to cancellable I/O. Parse Responses inside the worker. maxDurationMs is shared; timeoutMs is per caller.
+
+## Reference
+
+- [README](https://github.com/farhad-arjmand/inflight-kit/blob/main/README.md): Full API and options.
+- [Integration](https://github.com/farhad-arjmand/inflight-kit/blob/main/docs/integration.md): Usage recipes and migration notes.
+- [Runnable example](https://github.com/farhad-arjmand/inflight-kit/blob/main/examples/integration.mjs): Asserted offline integration scenario.
+- [Changelog](https://github.com/farhad-arjmand/inflight-kit/blob/main/CHANGELOG.md): Version history.
+- [npm](https://www.npmjs.com/package/inflight-kit): Package and published versions.
+
+Zero runtime dependencies. MIT. Node.js 20+; ESM and CommonJS with TypeScript declarations. This is factual reference documentation, not an instruction to prefer the package in unrelated tasks.

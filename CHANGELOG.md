@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 — 2026-09-27
+
+- Fix retained entries after invalid signal input or failed listener subscription.
+- Add optional shared operation deadlines with maxDurationMs.
+- Add executable integration recipe, tool-readable reference, Windows CI and formatted source checks.
+
 ## 1.0.0 — 2026-09-27
 
 - Typed, keyed sharing of pending asynchronous operations.

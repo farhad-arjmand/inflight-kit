@@ -1,7 +1,7 @@
 {
   "name": "inflight-kit",
-  "version": "1.0.0",
-  "description": "Share pending async work without sharing cancellation. Typed singleflight with per-caller deadlines and bounded admission.",
+  "version": "1.1.0",
+  "description": "Deduplicate concurrent async requests with independent AbortSignal cancellation, per-caller timeouts and shared deadlines. Zero-dependency TypeScript singleflight.",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -21,7 +21,13 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "docs",
+    "examples",
+    "llms.txt",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md"
   ],
   "sideEffects": false,
   "engines": {
@@ -34,17 +40,21 @@
     "check": "npm test && npm run test:types",
     "demo": "npm run build && node examples/demo.mjs",
     "prepack": "npm run build",
-    "test:package": "node scripts/smoke-pack.mjs"
+    "test:package": "node scripts/smoke-pack.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "singleflight",
-    "deduplicate",
-    "async",
-    "abortsignal",
-    "fetch",
+    "request-deduplication",
     "request-coalescing",
+    "abortsignal",
+    "cancellation",
+    "timeout",
+    "fetch",
     "typescript",
-    "cancellation"
+    "async",
+    "thundering-herd"
   ],
   "license": "MIT",
   "author": "Farhad Arjmand",
@@ -61,6 +71,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "prettier": "3.9.9",
     "typescript": "7.0.2"
   }
 }

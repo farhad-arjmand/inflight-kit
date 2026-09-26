@@ -1,13 +1,48 @@
-import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-rmSync('dist', { recursive: true, force: true });
-const common = ['--target', 'ES2022', '--strict', '--declaration', '--lib', 'ES2022,DOM', '--skipLibCheck'];
-const compile = args => execFileSync(process.execPath, ['node_modules/typescript/bin/tsc', ...args, ...common], {stdio:'inherit'});
-compile(['src/index.ts', '--module', 'ES2022', '--moduleResolution', 'bundler', '--outDir', 'dist/esm']);
-mkdirSync('dist/source', {recursive:true});
-writeFileSync('dist/source/index.cts', readFileSync('src/index.ts'));
-compile(['dist/source/index.cts', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', '--outDir', 'dist/cjs']);
-renameSync('dist/cjs/index.cjs','dist/cjs/index.js');
-renameSync('dist/cjs/index.d.cts','dist/cjs/index.d.ts');
-writeFileSync('dist/cjs/package.json', '{"type":"commonjs"}\n');
-rmSync('dist/source', {recursive:true});
+import { execFileSync } from "node:child_process";
+import {
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+rmSync("dist", { recursive: true, force: true });
+const common = [
+  "--target",
+  "ES2022",
+  "--strict",
+  "--declaration",
+  "--lib",
+  "ES2022,DOM",
+  "--skipLibCheck",
+];
+const compile = (args) =>
+  execFileSync(
+    process.execPath,
+    ["node_modules/typescript/bin/tsc", ...args, ...common],
+    { stdio: "inherit" },
+  );
+compile([
+  "src/index.ts",
+  "--module",
+  "ES2022",
+  "--moduleResolution",
+  "bundler",
+  "--outDir",
+  "dist/esm",
+]);
+mkdirSync("dist/source", { recursive: true });
+writeFileSync("dist/source/index.cts", readFileSync("src/index.ts"));
+compile([
+  "dist/source/index.cts",
+  "--module",
+  "NodeNext",
+  "--moduleResolution",
+  "NodeNext",
+  "--outDir",
+  "dist/cjs",
+]);
+renameSync("dist/cjs/index.cjs", "dist/cjs/index.js");
+renameSync("dist/cjs/index.d.cts", "dist/cjs/index.d.ts");
+writeFileSync("dist/cjs/package.json", '{"type":"commonjs"}\n');
+rmSync("dist/source", { recursive: true });
